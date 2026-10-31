@@ -1,7 +1,7 @@
 """Config: the settings for the current environment, from .env (tech spec, Configuration)."""
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -27,6 +27,7 @@ class Config:
     embed_model: str
     database_url: str
     clientdocs_db: Path
+    llm_api_key: str = field(repr=False)
 
     @classmethod
     def load(cls, path=ROOT / ".env"):
@@ -43,4 +44,6 @@ class Config:
             embed_model=os.environ["EMBED_MODEL"],
             database_url=os.environ["DATABASE_URL"],
             clientdocs_db=clientdocs_db if clientdocs_db.is_absolute() else ROOT / clientdocs_db,
+            # Ollama needs no key; the OpenAI SDK needs a value all the same
+            llm_api_key=os.environ.get("LLM_API_KEY", "unused"),
         )

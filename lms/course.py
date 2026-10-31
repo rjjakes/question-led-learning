@@ -34,8 +34,8 @@ def sources(chunks):
 
 
 class DraftQuestion(BaseModel):
-    scenario: str = Field(description="One to three sentences setting up a realistic situation for the learner")
-    question: str = Field(description="One open question about the situation, answered in the learner's own words")
+    scenario: str = Field(description='One to three sentences putting the learner, as "you", in a realistic situation')
+    question: str = Field(description="One open question about what the learner would do or explain in the situation")
     articles: list[str] = Field(description="Titles, exactly as given, of the source articles the question draws on")
 
 
@@ -57,9 +57,11 @@ class QuestionGenerator:
 and their answers are marked against the source passages below.
 
 Write {count} questions. For each:
-- scenario: one to three sentences setting up a realistic situation the learner might face.
-- question: one open question about the situation that asks the learner to explain, describe or reason, \
-such as "How is the procedure for X done?" or "Explain why Y is needed in this situation". \
+- scenario: one to three sentences that put the learner, as "you", in a realistic situation they might face, \
+such as "You receive an email that appears to come from your bank...". Only where the point can't be put as \
+a situation, set out the context plainly instead.
+- question: one open question about what the learner would do, notice or explain in that situation, and why, \
+such as "What should you do next, and why?" or "Which signs in this message suggest it isn't genuine?". \
 Not a yes/no question, not multiple choice, and not several questions in one.
 - articles: the titles, exactly as given, of the source articles the question draws on.
 
@@ -84,7 +86,8 @@ A good question:
 - can be answered fully from the sources;
 - is open: the learner must explain, describe or reason, not answer yes/no or give a single word;
 - asks one thing, clearly;
-- has a realistic scenario that agrees with the sources and doesn't give the answer away.
+- has a realistic scenario that agrees with the sources and doesn't give the answer away;
+- puts the learner in the situation as "you", where the point allows.
 
 Verdict "keep" if it meets all of these, "rewrite" if small changes fix it (give the fixed scenario and \
 question), "reject" if the sources can't support it."""

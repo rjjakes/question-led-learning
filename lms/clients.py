@@ -17,7 +17,7 @@ class LLMClient:
 
     def __init__(self, config):
         # "low" keeps some reasoning without letting it fill the 8,192-token context (tech spec, Open)
-        self.chat = ChatOpenAI(base_url=config.llm_base_url, model=config.llm_model, api_key="unused",
+        self.chat = ChatOpenAI(base_url=config.llm_base_url, model=config.llm_model, api_key=config.llm_api_key,
                                reasoning_effort="low", http_client=http_client(timeout=600))
 
     def text(self, step, messages):
