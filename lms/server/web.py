@@ -1,4 +1,5 @@
 """The learner's screen: a scenario and an open question, answered in the learner's words (product spec, The design).
+The same loop as JSON is under /v1 (lms/server/api.py).
 
     .venv/bin/python -m lms.server.web     then open http://127.0.0.1:8001
 """
@@ -10,6 +11,7 @@ import uvicorn
 from fastapi import FastAPI, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 
+from lms.server import api
 from lms.server.learning import AnswerFlow, AnswerScorer, AttemptLog, MAX_RESTATEMENTS, QuestionRestater
 from lms.utils import tracing
 from lms.utils.clients import LLMClient
@@ -26,6 +28,8 @@ llm = LLMClient(config)
 attempt_log = AttemptLog(store)
 flow = AnswerFlow(store, AnswerScorer(llm), QuestionRestater(llm), attempt_log)
 app = FastAPI(title="Question-led learning")
+app.state.learning = api.Learning(store, attempt_log, flow)
+app.include_router(api.router)
 
 STYLE = """
 :root { --fg: #1a1a1a; --muted: #5a5a5a; --line: #d6d6d6; --pass: #1d6b3a; --fail: #8a4b00; --bg: #fff; --panel: #f6f6f4; }
