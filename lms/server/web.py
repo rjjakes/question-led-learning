@@ -1,5 +1,5 @@
 """The learner's screen: a scenario and an open question, answered in the learner's words (product spec, The design).
-The same loop as JSON is under /v1 (lms/server/api.py).
+The same loop as JSON is under /api (lms/server/api.py).
 
     .venv/bin/python -m lms.server.web     then open http://127.0.0.1:8001
 """

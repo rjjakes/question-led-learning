@@ -67,8 +67,8 @@ def client():
 
 
 def start(c):
-    learner_id = c.post("/v1/courses/1/start").json()["learner_id"]
-    return f"/v1/learn/{learner_id}/1"
+    learner_id = c.post("/api/courses/1/start").json()["learner_id"]
+    return f"/api/learn/{learner_id}/1"
 
 
 def send(c, url, place, answer):
@@ -78,7 +78,7 @@ def send(c, url, place, answer):
 
 
 def test_courses():
-    assert client().get("/v1/courses").json() == [{"id": 1, "title": "Course", "questions": 2}]
+    assert client().get("/api/courses").json() == [{"id": 1, "title": "Course", "questions": 2}]
 
 
 def test_learner_loop():
@@ -121,5 +121,5 @@ def test_failed_scoring_records_nothing():
 
 def test_unknown_course_or_learner():
     c = client()
-    assert c.post("/v1/courses/9/start").status_code == 404
-    assert c.get("/v1/learn/9/1").status_code == 404
+    assert c.post("/api/courses/9/start").status_code == 404
+    assert c.get("/api/learn/9/1").status_code == 404

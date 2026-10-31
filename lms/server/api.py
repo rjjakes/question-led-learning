@@ -1,6 +1,6 @@
 """The learner loop as JSON, for the React frontend (tech spec, Frontend). The routes mirror the HTML pages in
-lms.server.web, under /v1 as in NVIDIA's RAG Blueprint (rag_server/server.py, v1_router), with Pydantic models
-for what they take and return.
+lms.server.web, under /api, the prefix NVIDIA's RAG Blueprint frontend puts on its backend calls
+(frontend/vite.config.ts). Pydantic models give what they take and return, as in its rag_server/server.py.
 
 lms.server.web builds the store and the learner loop and puts them on app.state (Starlette, Applications)."""
 
@@ -15,7 +15,7 @@ from lms.server.learning import MAX_RESTATEMENTS, AnswerFlow, AttemptLog
 from lms.utils.store import Store
 
 log = logging.getLogger(__name__)
-router = APIRouter(prefix="/v1")
+router = APIRouter(prefix="/api")
 
 
 @dataclass(frozen=True)
