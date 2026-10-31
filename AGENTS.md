@@ -43,3 +43,13 @@ Every commit message follows [Conventional Commits 1.0.0](https://www.convention
 - Settings come only from `.env`, through `lms/utils/config.py`. No addresses, model names or keys in code.
 - All SQL is in `lms/utils/store.py`.
 - The schema (`db/schema.sql`) changes only with the user's approval.
+
+## Frontend
+
+The React app in `frontend/`:
+
+- Each component does one job.
+- Pages only put components together.
+- Don't copy props into state.
+- Server data lives in TanStack Query's cache, not in copies of it.
+- Group code by feature.

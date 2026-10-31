@@ -1,4 +1,4 @@
-// What the learner API takes and returns (the Pydantic models in lms/server/api.py)
+// What the learner API returns (the Pydantic models in lms/server/api.py)
 
 export type Course = {
   id: number
@@ -19,13 +19,6 @@ export type Place = {
   total: number
   max_restatements: number
   question: QuestionShown | null
-}
-
-export type AnswerRequest = {
-  question_id: number
-  restatement: number
-  shown_text: string
-  answer: string
 }
 
 export type Outcome = {
