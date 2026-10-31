@@ -2,7 +2,7 @@
 
 import pytest
 
-from lms.ingest import MAX_TOKENS, Chunker, Extractor, load_tokenizer
+from lms.setup.ingest import MAX_TOKENS, Chunker, Extractor, load_tokenizer
 
 ARTICLE = {
     "name": "Pressure ulcer",

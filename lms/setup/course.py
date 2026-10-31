@@ -9,8 +9,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from lms.checks import answer_problems
-from lms.tracing import tracer
+from lms.utils.checks import answer_problems
+from lms.utils.tracing import tracer
 
 log = logging.getLogger(__name__)
 

@@ -32,14 +32,14 @@ Every commit message follows [Conventional Commits 1.0.0](https://www.convention
 ## Commands
 
 - Postgres and Jaeger: `docker compose up -d`. TEI and the LLM run outside Docker (`docs/deployment.md`).
-- Ingest and course setup: `.venv/bin/python -m lms.cli --help`
-- Learner page: `.venv/bin/python -m lms.web`, at http://127.0.0.1:8001
+- Ingest and course setup: `.venv/bin/python -m lms.setup.cli --help`
+- Learner page: `.venv/bin/python -m lms.server.web`, at http://127.0.0.1:8001
 - Tests, which need no services: `HF_HUB_OFFLINE=1 .venv/bin/python -m pytest -q tests`
 - Traces: http://127.0.0.1:16686, or `.venv/bin/python tools/runtime/show_trace.py "answer request"`
 
 ## Code
 
 - Build what the specs say. Where they are silent, follow the reference projects the tech spec names rather than inventing a design.
-- Settings come only from `.env`, through `lms/config.py`. No addresses, model names or keys in code.
-- All SQL is in `lms/store.py`.
+- Settings come only from `.env`, through `lms/utils/config.py`. No addresses, model names or keys in code.
+- All SQL is in `lms/utils/store.py`.
 - The schema (`db/schema.sql`) changes only with the user's approval.

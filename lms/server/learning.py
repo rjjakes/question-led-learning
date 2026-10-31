@@ -9,8 +9,8 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel, Field
 
-from lms.checks import restatement_problems
-from lms.tracing import tracer
+from lms.utils.checks import restatement_problems
+from lms.utils.tracing import tracer
 
 log = logging.getLogger(__name__)
 

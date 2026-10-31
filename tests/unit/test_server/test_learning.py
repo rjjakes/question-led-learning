@@ -1,6 +1,6 @@
 """ProgressRule and AttemptLog.place."""
 
-from lms.learning import MAX_RESTATEMENTS, AttemptLog, progress_rule
+from lms.server.learning import MAX_RESTATEMENTS, AttemptLog, progress_rule
 
 
 def test_progress_rule():

@@ -1,6 +1,6 @@
 """The reply checks: answer_problems and restatement_problems."""
 
-from lms.checks import MAX_ANSWER_WORDS, answer_problems, restatement_problems
+from lms.utils.checks import MAX_ANSWER_WORDS, answer_problems, restatement_problems
 
 
 def test_answer_checks_pass_plain_prose():

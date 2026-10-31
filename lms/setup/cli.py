@@ -1,12 +1,12 @@
 """Command line for ingest and course setup (product spec, Course setup).
 
-    .venv/bin/python -m lms.cli ingest data/test-articles.txt
-    .venv/bin/python -m lms.cli create-topic "Sample topic" data/test-articles.txt
-    .venv/bin/python -m lms.cli create-course TOPIC_ID "Course title" "Article title" ...
-    .venv/bin/python -m lms.cli generate COURSE_ID "make 3 questions about wound care" --count 3
-    .venv/bin/python -m lms.cli add-question COURSE_ID --scenario ... --question ... --article "Article title"
-    .venv/bin/python -m lms.cli edit-question QUESTION_ID [--scenario ...] [--question ...] [--answer ...] [--status ...]
-    .venv/bin/python -m lms.cli questions COURSE_ID
+    .venv/bin/python -m lms.setup.cli ingest data/test-articles.txt
+    .venv/bin/python -m lms.setup.cli create-topic "Sample topic" data/test-articles.txt
+    .venv/bin/python -m lms.setup.cli create-course TOPIC_ID "Course title" "Article title" ...
+    .venv/bin/python -m lms.setup.cli generate COURSE_ID "make 3 questions about wound care" --count 3
+    .venv/bin/python -m lms.setup.cli add-question COURSE_ID --scenario ... --question ... --article "Article title"
+    .venv/bin/python -m lms.setup.cli edit-question QUESTION_ID [--scenario ...] [--question ...] [--answer ...] [--status ...]
+    .venv/bin/python -m lms.setup.cli questions COURSE_ID
 """
 
 import argparse
@@ -14,10 +14,10 @@ import logging
 import sys
 from pathlib import Path
 
-from lms import tracing
-from lms.clients import EmbeddingClient, LLMClient
-from lms.config import Config
-from lms.store import Store
+from lms.utils import tracing
+from lms.utils.clients import EmbeddingClient, LLMClient
+from lms.utils.config import Config
+from lms.utils.store import Store
 
 
 def read_titles(path):
@@ -25,7 +25,7 @@ def read_titles(path):
 
 
 def cmd_ingest(args, config, store):
-    from lms.ingest import Chunker, Extractor, Indexer, ClientDocsSource, ingest, load_tokenizer
+    from lms.setup.ingest import Chunker, Extractor, Indexer, ClientDocsSource, ingest, load_tokenizer
     ingested, skipped, missing = ingest(
         read_titles(args.titles_file), ClientDocsSource(config.clientdocs_db), Extractor(),
         Chunker(load_tokenizer(config.embed_model)), Indexer(EmbeddingClient(config), store), store)
@@ -52,7 +52,7 @@ def cmd_create_course(args, config, store):
 
 
 def course_setup(config, store):
-    from lms.course import AnswerDrafter, CourseSetup, QuestionChecker, QuestionGenerator, Retriever
+    from lms.setup.course import AnswerDrafter, CourseSetup, QuestionChecker, QuestionGenerator, Retriever
     llm = LLMClient(config)
     return CourseSetup(store, Retriever(EmbeddingClient(config), store), QuestionGenerator(llm),
                        QuestionChecker(llm), AnswerDrafter(llm))
@@ -85,7 +85,7 @@ def cmd_questions(args, config, store):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(prog="lms.cli", description="Ingest and course setup")
+    parser = argparse.ArgumentParser(prog="lms.setup.cli", description="Ingest and course setup")
     sub = parser.add_subparsers(required=True)
 
     p = sub.add_parser("ingest", help="extract, chunk, embed and store articles from clientdocs.duckdb")

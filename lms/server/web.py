@@ -1,6 +1,6 @@
 """The learner's screen: a scenario and an open question, answered in the learner's words (product spec, The design).
 
-    .venv/bin/python -m lms.web     then open http://127.0.0.1:8001
+    .venv/bin/python -m lms.server.web     then open http://127.0.0.1:8001
 """
 
 import html
@@ -10,11 +10,11 @@ import uvicorn
 from fastapi import FastAPI, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 
-from lms import tracing
-from lms.clients import LLMClient
-from lms.config import Config
-from lms.learning import AnswerFlow, AnswerScorer, AttemptLog, MAX_RESTATEMENTS, QuestionRestater
-from lms.store import Store
+from lms.server.learning import AnswerFlow, AnswerScorer, AttemptLog, MAX_RESTATEMENTS, QuestionRestater
+from lms.utils import tracing
+from lms.utils.clients import LLMClient
+from lms.utils.config import Config
+from lms.utils.store import Store
 
 PORT = 8001
 log = logging.getLogger(__name__)
@@ -132,7 +132,7 @@ def answer(learner_id: int, course_id: int, question_id: int = Form(), restateme
     try:
         outcome = flow.answer(learner_id, question_id, restatement, shown_text, answer)
     except Exception:
-        # The LLM call failed twice (lms.clients.ATTEMPTS); nothing was recorded, so the learner can send it again
+        # The LLM call failed twice (lms.utils.clients.ATTEMPTS); nothing was recorded, so the learner can send it again
         log.exception("answer request failed")
         body = ('<div class="feedback fail"><strong class="fail">Your answer couldn\'t be scored just now.</strong> '
                 'Please send it again.</div>' + question_form(learner_id, course_id, question_id, restatement, shown_text))

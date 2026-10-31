@@ -13,7 +13,7 @@ from huggingface_hub import hf_hub_download
 from langchain_text_splitters import MarkdownHeaderTextSplitter, RecursiveCharacterTextSplitter
 from tokenizers import Tokenizer
 
-from lms.tracing import tracer
+from lms.utils.tracing import tracer
 
 log = logging.getLogger(__name__)
 

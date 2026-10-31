@@ -2,7 +2,7 @@
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
-from lms.tracing import http_client, tracer
+from lms.utils.tracing import http_client, tracer
 
 # Qwen3-Embedding's query prompt (config_sentence_transformers.json, "prompts"); documents get none
 QUERY_PROMPT = "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:"
@@ -25,7 +25,7 @@ class LLMClient:
 
     def text(self, step, messages, check=None):
         """The reply as text. step names the call's span (run_name). check, if given, returns a reply's
-        problems as sentences (lms/checks.py): a reply with problems is sent back with them, and if the
+        problems as sentences (lms/utils/checks.py): a reply with problems is sent back with them, and if the
         last of ATTEMPTS replies still has problems, ValueError is raised."""
         chat = self.chat.with_retry(stop_after_attempt=ATTEMPTS)
         for _ in range(ATTEMPTS):
