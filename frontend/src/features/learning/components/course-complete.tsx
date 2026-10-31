@@ -1,25 +1,33 @@
 import { Link } from "react-router"
 
 import { buttonVariants } from "@/components/ui/button"
-import {
-  Empty,
-  EmptyContent,
-  EmptyHeader,
-  EmptyTitle,
-} from "@/components/ui/empty"
 import { paths } from "@/config/paths"
+import { cn } from "@/lib/utils"
 
-export const CourseComplete = () => {
+import { ResultsList } from "./results-list"
+
+type CourseCompleteProps = {
+  learnerId: string
+  courseId: string
+}
+
+/**
+ * Summary of results.
+ */
+export const CourseComplete = ({
+  learnerId,
+  courseId,
+}: CourseCompleteProps) => {
   return (
-    <Empty className="border">
-      <EmptyHeader>
-        <EmptyTitle>You have answered every question.</EmptyTitle>
-      </EmptyHeader>
-      <EmptyContent>
-        <Link to={paths.courses.getHref()} className={buttonVariants()}>
-          Courses
-        </Link>
-      </EmptyContent>
-    </Empty>
+    <>
+      <p>You have answered every question.</p>
+      <ResultsList learnerId={learnerId} courseId={courseId} />
+      <Link
+        to={paths.courses.getHref()}
+        className={cn(buttonVariants(), "self-start")}
+      >
+        Courses
+      </Link>
+    </>
   )
 }

@@ -21,6 +21,13 @@ export type Place = {
   question: QuestionShown | null
 }
 
+export type Result = {
+  number: number
+  question: string
+  passed: boolean
+  restatements: number
+}
+
 export type Outcome = {
   passed: boolean
   feedback: string

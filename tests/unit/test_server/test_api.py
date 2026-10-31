@@ -101,6 +101,9 @@ def test_learner_loop():
     assert send(c, url, place, "right").json()["step"] == "next"
     place = c.get(url).json()
     assert (place["number"], place["question"]) == (None, None)
+    assert c.get(f"{url}/results").json() == [
+        {"number": 1, "question": "Q1", "passed": False, "restatements": MAX_RESTATEMENTS},
+        {"number": 2, "question": "Q2", "passed": True, "restatements": 0}]
 
 
 def test_answer_not_to_current_place():
@@ -123,3 +126,4 @@ def test_unknown_course_or_learner():
     c = client()
     assert c.post("/api/courses/9/start").status_code == 404
     assert c.get("/api/learn/9/1").status_code == 404
+    assert c.get("/api/learn/9/1/results").status_code == 404

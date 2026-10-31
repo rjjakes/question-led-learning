@@ -1,4 +1,4 @@
-"""ProgressRule and AttemptLog.place."""
+"""ProgressRule, AttemptLog.place and AttemptLog.results."""
 
 from lms.server.learning import MAX_RESTATEMENTS, AttemptLog, progress_rule
 
@@ -36,3 +36,15 @@ def test_place():
     assert place([attempt(1, 0, False), attempt(1, 1, True)]) == (2, 0)
     assert place([attempt(1, r, False) for r in range(MAX_RESTATEMENTS + 1)]) == (2, 0)
     assert place([attempt(1, 0, True), attempt(2, 0, True)]) == (None, 0)
+
+
+def test_results():
+    def results(attempts):
+        return [(r.number, r.question["id"], r.passed, r.restatements)
+                for r in AttemptLog(FakeStore(attempts)).results(1, 1)]
+
+    assert results([]) == []
+    assert results([attempt(1, 0, False)]) == []
+    assert results([attempt(1, 0, False), attempt(1, 1, True)]) == [(1, 1, True, 1)]
+    assert results([attempt(1, r, False) for r in range(MAX_RESTATEMENTS + 1)] + [attempt(2, 0, True)]) == [
+        (1, 1, False, MAX_RESTATEMENTS), (2, 2, True, 0)]

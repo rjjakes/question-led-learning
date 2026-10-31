@@ -46,7 +46,7 @@ const LearnRoute = () => {
             maxRestatements={place.max_restatements}
           />
         ) : (
-          <CourseComplete />
+          <CourseComplete learnerId={learnerId} courseId={courseId} />
         )}
       </ErrorBoundary>
     </ContentLayout>

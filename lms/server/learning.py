@@ -79,6 +79,11 @@ def original_text(question):
     return f"{question['scenario']}\n\n{question['question']}"
 
 
+def final_attempt(attempts):
+    """The attempt that finished a question: a pass, or the answer to its last restatement. None if unfinished."""
+    return next((a for a in attempts if a["score"] or a["restatement"] >= MAX_RESTATEMENTS), None)
+
+
 @dataclass(frozen=True)
 class Place:
     """Where a learner is in a course: the current question and which restatement of it they answer next."""
@@ -86,6 +91,15 @@ class Place:
     restatement: int
     last_shown: str | None = None
     last_answer: str | None = None
+
+
+@dataclass(frozen=True)
+class Result:
+    """How a finished question went: passed, or shown the answer after the last restatement."""
+    number: int        # the question's place in the course, from 1
+    question: dict
+    passed: bool
+    restatements: int  # restatements answered before the learner passed or was shown the answer
 
 
 class AttemptLog:
@@ -97,12 +111,22 @@ class AttemptLog:
     def record(self, learner_id, question_id, restatement, shown_text, answer, passed):
         self.store.save_attempt(learner_id, question_id, restatement, shown_text, answer, passed)
 
+    def results(self, learner_id, course_id):
+        """How each question the learner has finished went, in course order."""
+        attempts = self.store.attempts(learner_id, course_id)
+        results = []
+        for number, question in enumerate(self.store.questions(course_id, status="checked"), 1):
+            final = final_attempt([a for a in attempts if a["question_id"] == question["id"]])
+            if final:
+                results.append(Result(number, question, final["score"], final["restatement"]))
+        return results
+
     def place(self, learner_id, course_id):
         """The first checked question the learner hasn't passed or run out of restatements on."""
         attempts = self.store.attempts(learner_id, course_id)
         for question in self.store.questions(course_id, status="checked"):
             mine = [a for a in attempts if a["question_id"] == question["id"]]
-            if any(a["score"] for a in mine) or any(a["restatement"] >= MAX_RESTATEMENTS for a in mine):
+            if final_attempt(mine):
                 continue
             if not mine:
                 return Place(question, 0)

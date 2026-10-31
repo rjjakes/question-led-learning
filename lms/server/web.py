@@ -43,7 +43,8 @@ button, .button { font: inherit; padding: 0.45rem 1.1rem; border: 1px solid var(
 .feedback.pass { border-color: var(--pass); } .feedback.fail { border-color: var(--fail); }
 .feedback strong.pass { color: var(--pass); } .feedback strong.fail { color: var(--fail); }
 .answer { white-space: pre-wrap; border: 1px dashed var(--line); padding: 0.8rem 1rem; margin-bottom: 1.4rem; }
-ul.courses { padding: 0; list-style: none; } ul.courses li { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.6rem 0; border-bottom: 1px solid var(--line); }
+ul.courses, ul.results { padding: 0; list-style: none; } ul.courses li, ul.results li { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.6rem 0; border-bottom: 1px solid var(--line); }
+ul.results .meta { margin: 0; white-space: nowrap; }
 """
 
 
@@ -96,6 +97,12 @@ def progress_meta(course, place):
     return f"Question {ids.index(place.question['id']) + 1} of {len(ids)}"
 
 
+def result_text(result):
+    if not result.passed:
+        return "Answer shown"
+    return "Passed first time" if result.restatements == 0 else f"Passed after {plural(result.restatements, 'restatement')}"
+
+
 @app.get("/", response_class=HTMLResponse)
 def index():
     rows = "".join(
@@ -113,13 +120,15 @@ def start(course_id: int):
 
 @app.get("/learn/{learner_id}/{course_id}", response_class=HTMLResponse)
 def show(learner_id: int, course_id: int):
-    """Shows the learner's current question, or the end of the course."""
+    """Shows the learner's current question, or the end of the course with how each question went."""
     learner_or_404(learner_id)
     course = course_or_404(course_id)
     place = attempt_log.place(learner_id, course_id)
     if place.question is None:
-        return page("Course complete", '<p>You have answered every question.</p><a class="button" href="/">Courses</a>',
-                    progress_meta(course, place))
+        rows = "".join(f'<li><span>{r.number}. {esc(r.question["question"])}</span>'
+                       f'<span class="meta">{result_text(r)}</span></li>' for r in attempt_log.results(learner_id, course_id))
+        return page("Course complete", f'<p>You have answered every question.</p><ul class="results">{rows}</ul>'
+                    '<a class="button" href="/">Courses</a>', progress_meta(course, place))
     form = question_form(learner_id, course_id, place.question["id"], place.restatement, flow.shown_text(place))
     return page(course["title"], form, progress_meta(course, place))
 

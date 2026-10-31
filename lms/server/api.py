@@ -58,6 +58,13 @@ class PlaceResponse(BaseModel):
     question: QuestionShown | None
 
 
+class ResultItem(BaseModel):
+    number: int        # the question's place in the course, from 1
+    question: str      # the question without its scenario
+    passed: bool       # False if the learner was shown the answer
+    restatements: int  # restatements answered before passing or being shown the answer
+
+
 class AnswerRequest(BaseModel):
     question_id: int
     restatement: int
@@ -111,6 +118,15 @@ def show(learner_id: int, course_id: int, learning: LearningDep):
     return {"course_id": course["id"], "course_title": course["title"],
             "number": ids.index(place.question["id"]) + 1 if place.question else None, "total": len(ids),
             "max_restatements": MAX_RESTATEMENTS, "question": question}
+
+
+@router.get("/learn/{learner_id}/{course_id}/results", response_model=list[ResultItem])
+def results(learner_id: int, course_id: int, learning: LearningDep):
+    """How each question the learner has finished went, in course order."""
+    learner_or_404(learning.store, learner_id)
+    course_or_404(learning.store, course_id)
+    return [{"number": r.number, "question": r.question["question"], "passed": r.passed,
+             "restatements": r.restatements} for r in learning.attempt_log.results(learner_id, course_id)]
 
 
 @router.post("/learn/{learner_id}/{course_id}", response_model=OutcomeResponse, responses={
