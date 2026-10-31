@@ -1,0 +1,27 @@
+# Dev services on this Mac. The LLM runs on the 1080 Ti machine; TEI runs natively for Metal.
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.7-pg18
+    container_name: lms-postgres
+    environment:
+      POSTGRES_USER: lms
+      POSTGRES_DB: lms
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+    restart: unless-stopped
+
+  # Trace viewer (tech spec, Tracing). Keeps traces in memory, so they go when it restarts.
+  jaeger:
+    image: jaegertracing/jaeger:2.22.0
+    container_name: lms-jaeger
+    ports:
+      - "127.0.0.1:16686:16686" # UI
+      - "127.0.0.1:4317:4317"   # OTLP over gRPC, from TEI
+      - "127.0.0.1:4318:4318"   # OTLP over HTTP, from the app
+    restart: unless-stopped
+
+volumes:
+  pgdata:

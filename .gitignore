@@ -1,0 +1,31 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Data: downloads and files built from them
+data/
+*.duckdb.wal
+
+# OS and editors
+.DS_Store
+.vscode/
+.idea/
+
+# Claude Code's per-user settings
+.claude/settings.local.json
+.claude/launch.json
+
+# Research and reviews
+research/
+reviews/
+docs/
+
+# Content collection and selection tools
+tools/content/
