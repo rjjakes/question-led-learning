@@ -1,0 +1,31 @@
+# Runs the tests on every push to main and every pull request into it. After GitHub's Python
+# starter workflow (actions/starter-workflows, ci/python-app.yml) and GitHub Docs, Building and
+# testing Python
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"  # the dev .venv's version
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      # python -m puts the repository root on sys.path, so the tests can import lms. The Chunker
+      # test downloads Qwen3-Embedding's tokenizer.json from Hugging Face
+      - name: Test with pytest
+        run: python -m pytest -q tests
