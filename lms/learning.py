@@ -9,6 +9,7 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel, Field
 
+from lms.checks import restatement_problems
 from lms.tracing import tracer
 
 log = logging.getLogger(__name__)
@@ -63,7 +64,7 @@ the text they last saw. Reply with the restated scenario and question only, addr
             ("user", f"Original scenario: {question['scenario']}\nOriginal question: {question['question']}\n\n"
                      f"Model answer:\n{question['answer']}\n\nText the learner last saw:\n{last_shown}\n\n"
                      f"Learner's answer:\n{last_answer}"),
-        ])
+        ], check=lambda text: restatement_problems(text, question["answer"]))
 
 
 def progress_rule(passed, restatement):
@@ -132,7 +133,9 @@ class AnswerFlow:
             question = self.store.question(question_id)
             score = self.scorer.score(shown_text, question["answer"], answer)
             step = progress_rule(score.passed, restatement)
-            restated = self.restater.restate(question, shown_text, answer, restatement + 1) if step == "restate" else None
+            restated = None
+            if step == "restate":
+                restated = self._restate(question, shown_text, answer, restatement + 1)
             self.attempt_log.record(learner_id, question_id, restatement, shown_text, answer, score.passed)
             return Outcome(score.passed, score.feedback, step, restated, question["answer"] if step == "reveal" else None)
 
@@ -142,8 +145,12 @@ class AnswerFlow:
         if place.restatement == 0:
             return original_text(place.question)
         with tracer.start_as_current_span("restate request", attributes={"lms.question": place.question["id"]}):
-            try:
-                return self.restater.restate(place.question, place.last_shown, place.last_answer, place.restatement)
-            except Exception:
-                log.exception("QuestionRestater failed; showing the last text again")
-                return place.last_shown
+            return self._restate(place.question, place.last_shown, place.last_answer, place.restatement)
+
+    def _restate(self, question, last_shown, last_answer, n):
+        """Restatement n, or the last text again if the restater's call or its checks fail."""
+        try:
+            return self.restater.restate(question, last_shown, last_answer, n)
+        except Exception:
+            log.exception("QuestionRestater failed; showing the last text again")
+            return last_shown

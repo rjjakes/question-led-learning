@@ -8,8 +8,11 @@ from lms.tracing import http_client, tracer
 QUERY_PROMPT = "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:"
 # TEI's default --max-client-batch-size
 EMBED_BATCH = 32
-# A failed call or a reply that doesn't fit the schema is tried once more, then raised
+# A failed call, a reply that doesn't fit the schema or one that fails its checks is tried once more, then raised
 ATTEMPTS = 2
+# Sent back with a reply that fails its checks, after LangChain's NAIVE_COMPLETION_RETRY_WITH_ERROR
+# (langchain_classic/output_parsers/retry.py)
+RETRY_WITH_PROBLEMS = "Your reply did not satisfy the instructions:\n{problems}\nPlease try again."
 
 
 class LLMClient:
@@ -20,10 +23,19 @@ class LLMClient:
         self.chat = ChatOpenAI(base_url=config.llm_base_url, model=config.llm_model, api_key=config.llm_api_key,
                                reasoning_effort="low", http_client=http_client(timeout=600))
 
-    def text(self, step, messages):
-        """The reply as text. step names the call's span (run_name)."""
-        reply = self.chat.with_retry(stop_after_attempt=ATTEMPTS).invoke(messages, config={"run_name": step})
-        return reply.content.strip()
+    def text(self, step, messages, check=None):
+        """The reply as text. step names the call's span (run_name). check, if given, returns a reply's
+        problems as sentences (lms/checks.py): a reply with problems is sent back with them, and if the
+        last of ATTEMPTS replies still has problems, ValueError is raised."""
+        chat = self.chat.with_retry(stop_after_attempt=ATTEMPTS)
+        for _ in range(ATTEMPTS):
+            reply = chat.invoke(messages, config={"run_name": step}).content.strip()
+            problems = check(reply) if check else []
+            if not problems:
+                return reply
+            listed = "\n".join(f"- {p}" for p in problems)
+            messages = [*messages, ("assistant", reply), ("user", RETRY_WITH_PROBLEMS.format(problems=listed))]
+        raise ValueError(f"{step} reply failed its checks: {' '.join(problems)}")
 
     def json(self, step, schema, messages):
         """The reply as an instance of the Pydantic model schema, through response_format json_schema."""

@@ -9,6 +9,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from lms.checks import answer_problems
 from lms.tracing import tracer
 
 log = logging.getLogger(__name__)
@@ -116,7 +117,7 @@ answers will be marked against it, so state the key points a good answer must co
         return self.llm.text("AnswerDrafter", [
             ("system", self.PROMPT),
             ("user", f"Scenario: {scenario}\nQuestion: {question}\n\nSources:\n\n{sources(chunks)}"),
-        ])
+        ], check=answer_problems)
 
 
 class CourseSetup:
