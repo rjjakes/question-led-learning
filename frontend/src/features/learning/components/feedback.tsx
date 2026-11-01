@@ -14,9 +14,9 @@ export const Feedback = ({ outcome }: FeedbackProps) => {
   return (
     <Alert>
       {outcome.passed ? (
-        <CheckCircle2Icon className="size-12" />
+        <CheckCircle2Icon className="size-12 stroke-success" />
       ) : (
-        <AlertTriangleIcon className="size-12" />
+        <AlertTriangleIcon className="size-12 stroke-warning" />
       )}
       <AlertTitle>{outcome.passed ? "Good answer." : "Not quite."}</AlertTitle>
       <AlertDescription>{outcome.feedback}</AlertDescription>
