@@ -7,7 +7,9 @@ type FeedbackProps = {
   outcome: Outcome
 }
 
-/** The scorer's verdict on an answer, with an icon for pass or fail. */
+/** 
+ * The scorer's verdict on an answer, with an icon for pass or fail. 
+ */
 export const Feedback = ({ outcome }: FeedbackProps) => {
   return (
     <Alert>

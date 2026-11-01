@@ -13,7 +13,10 @@ export const sendAnswerInputSchema = z.object({
 
 export type SendAnswerInput = z.infer<typeof sendAnswerInputSchema>
 
-/** Sends the learner's answer to the question as shown, and gets it scored. */
+/** 
+ * Posts the learner's answer with the question wording they saw,
+ * which may be a restatement, and returns the score. 
+ */
 export const sendAnswer = ({
   learnerId,
   courseId,

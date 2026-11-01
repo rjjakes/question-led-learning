@@ -53,3 +53,4 @@ The React app in `frontend/`:
 - Don't copy props into state.
 - Server data lives in TanStack Query's cache, not in copies of it.
 - Group code by feature.
+- Docblocks span lines: `/**` alone, ` * ` text within 80 columns, `*/` alone.

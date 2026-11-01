@@ -4,7 +4,9 @@ type ModelAnswerProps = {
   answer: string
 }
 
-/** The question's answer, shown when the learner has run out of restatements. */
+/**
+ * The question's answer, shown when the learner has run out of restatements. 
+ */
 export const ModelAnswer = ({ answer }: ModelAnswerProps) => {
   return (
     <Card>

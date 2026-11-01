@@ -18,8 +18,10 @@ type QuestionProps = {
   maxRestatements: number
 }
 
-/** One question: the learner answers it, then answers each restatement after a fail, until they pass or are
- * shown the answer. */
+/** 
+ * One question: the learner answers it, then answers each restatement
+ * after a fail, until they pass or are shown the answer. 
+ */
 export const Question = ({
   learnerId,
   courseId,
