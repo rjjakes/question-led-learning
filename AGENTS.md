@@ -33,8 +33,10 @@ Every commit message follows [Conventional Commits 1.0.0](https://www.convention
 
 - Postgres and Jaeger: `docker compose up -d`. TEI and the LLM run outside Docker (`docs/deployment.md`).
 - Ingest and course setup: `.venv/bin/python -m lms.setup.cli --help`
-- Learner page: `.venv/bin/python -m lms.server.web`, at http://127.0.0.1:8001
+- Backend: `.venv/bin/python -m lms.server.web`, at http://127.0.0.1:8001
+- Learner page: `npm --prefix frontend run dev`, at http://localhost:5173
 - Tests, which need no services: `HF_HUB_OFFLINE=1 .venv/bin/python -m pytest -q tests`
+- Frontend tests: `npm --prefix frontend run test:run`
 - Traces: http://127.0.0.1:16686, or `.venv/bin/python tools/runtime/show_trace.py "answer request"`
 
 ## Code
