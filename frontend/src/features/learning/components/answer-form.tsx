@@ -14,6 +14,7 @@ import { sendAnswerInputSchema, type SendAnswerInput } from "../api/send-answer"
 type AnswerFormProps = {
   question: QuestionShown
   maxRestatements: number
+  defaultAnswer: string
   isPending: boolean
   onSubmit: (data: SendAnswerInput) => void
 }
@@ -22,12 +23,13 @@ type AnswerFormProps = {
 export const AnswerForm = ({
   question,
   maxRestatements,
+  defaultAnswer,
   isPending,
   onSubmit,
 }: AnswerFormProps) => {
   const form = useForm<SendAnswerInput>({
     resolver: zodResolver(sendAnswerInputSchema),
-    defaultValues: { answer: "" },
+    defaultValues: { answer: defaultAnswer },
   })
 
   return (

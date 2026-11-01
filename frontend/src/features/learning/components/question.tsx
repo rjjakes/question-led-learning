@@ -42,6 +42,7 @@ export const Question = ({
           key={question.restatement}
           question={question}
           maxRestatements={maxRestatements}
+          defaultAnswer={sendAnswerMutation.variables?.data.answer ?? ""}
           isPending={sendAnswerMutation.isPending}
           onSubmit={(data) =>
             sendAnswerMutation.mutate({ learnerId, courseId, question, data })
