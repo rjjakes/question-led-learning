@@ -1,5 +1,6 @@
 import { useIsFetching, useQueryClient } from "@tanstack/react-query"
 
+import { ThinkingTime } from "@/components/thinking-time"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import type { QuestionShown } from "@/types/api"
@@ -49,16 +50,18 @@ export const Question = ({
           {outcome.step === "reveal" && outcome.model_answer && (
             <ModelAnswer answer={outcome.model_answer} />
           )}
-          <Button
-            disabled={moving}
-            onClick={() =>
-              queryClient.invalidateQueries({ queryKey: placeKey })
-            }
-            className="self-start"
-          >
-            {moving && <Spinner />}
-            Next question
-          </Button>
+          <div className="flex flex-col items-start gap-2">
+            <Button
+              disabled={moving}
+              onClick={() =>
+                queryClient.invalidateQueries({ queryKey: placeKey })
+              }
+            >
+              {moving && <Spinner />}
+              Next question
+            </Button>
+            {moving && <ThinkingTime />}
+          </div>
         </>
       )}
     </>

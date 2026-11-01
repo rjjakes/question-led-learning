@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router"
 
+import { ThinkingTime } from "@/components/thinking-time"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { paths } from "@/config/paths"
@@ -21,12 +22,15 @@ export const StartCourse = ({ courseId }: StartCourseProps) => {
   })
 
   return (
-    <Button
-      disabled={startCourseMutation.isPending}
-      onClick={() => startCourseMutation.mutate({ courseId })}
-    >
-      {startCourseMutation.isPending && <Spinner />}
-      Start
-    </Button>
+    <div className="flex flex-col items-end gap-2">
+      <Button
+        disabled={startCourseMutation.isPending}
+        onClick={() => startCourseMutation.mutate({ courseId })}
+      >
+        {startCourseMutation.isPending && <Spinner />}
+        Start
+      </Button>
+      {startCourseMutation.isPending && <ThinkingTime />}
+    </div>
   )
 }

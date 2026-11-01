@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 
+import { ThinkingTime } from "@/components/thinking-time"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
@@ -59,10 +60,13 @@ export const AnswerForm = ({
           </Field>
         )}
       />
-      <Button type="submit" disabled={isPending} className="self-start">
-        {isPending && <Spinner />}
-        Submit answer
-      </Button>
+      <div className="flex flex-col items-start gap-2">
+        <Button type="submit" disabled={isPending}>
+          {isPending && <Spinner />}
+          Submit answer
+        </Button>
+        {isPending && <ThinkingTime />}
+      </div>
     </form>
   )
 }
